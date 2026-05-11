@@ -57,19 +57,19 @@ Safe analytics on anonymized datasets
 
 Each domain has its own privacy policy:
 
-Healthcare → stricter PHI rules.
-Finance → account + transaction focus.
-HR → resume + identity masking.
-General → minimal scrubbing.
+Healthcare → stricter PHI rules.  
+Finance → account + transaction focus.  
+HR → resume + identity masking.  
+General → minimal scrubbing.  
 
 ## 🧪 Current Capabilities (MVP Status)
 
-✔ PDF / DOCX / TXT ingestion
-✔ Semantic domain detection (no keywords)
-✔ PII detection using Presidio
-✔ Deterministic tokenization
-✔ Domain-based privacy policies
-✔ FastAPI backend
+✔ PDF / DOCX / TXT ingestion  
+✔ Semantic domain detection (no keywords)  
+✔ PII detection using Presidio  
+✔ Deterministic tokenization  
+✔ Domain-based privacy policies  
+✔ FastAPI backend  
 
 ## 1. 🧪 Current Scope vs Future Scope (VERY IMPORTANT)
 
