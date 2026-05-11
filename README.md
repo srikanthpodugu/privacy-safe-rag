@@ -70,3 +70,18 @@ General → minimal scrubbing
 ✔ Deterministic tokenization
 ✔ Domain-based privacy policies
 ✔ FastAPI backend
+
+## 1. 🧪 Current Scope vs Future Scope (VERY IMPORTANT)
+
+📌 Current Scope (MVP)
+Single-node processing
+Rule + embedding based classification
+Presidio-based PII detection
+Deterministic tokenization
+
+🚧 Future Scope (Roadmap)
+Token vault (re-identification service)
+Multi-language PII detection
+LLM-based contextual entity detection
+Risk scoring + compliance layer (GDPR/HIPAA/PCI)
+Distributed ingestion pipeline (Kafka / queue-based)
