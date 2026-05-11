@@ -1,6 +1,5 @@
 # Enterprise AI Privacy Gateway (Production Prototype)
-A production-grade "Privacy-First" wrapper for LLM applications. 
-This system acts as a secure firewall, redacting sensitive PII from any document before it reaches an AI model.
+A privacy-first AI ingestion and redaction system that detects, classifies, and anonymizes sensitive data before it reaches LLMs or RAG pipelines.
 
 ## The Core Problem
 Most AI systems send raw documents directly to cloud LLMs, risking the exposure of Sensitive Personal Information (PII/PHI). This project implements a **Local Governance Layer** that redacts sensitive data *before* it ever leaves your secure environment.
