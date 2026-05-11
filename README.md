@@ -22,3 +22,6 @@ Most AI systems send raw documents directly to cloud LLMs, risking the exposure 
 2. **Analysis:** Presidio + spaCy scan for entities (PERSON, PHONE, EMAIL).
 3. **Anonymization:** Real names are replaced with safe placeholders 
 4. **Processing:** The "scrubbed" text is then safely used for AI summaries or questions.
+
+## Note: Streamlit
+Streamlit is just a demo layer and all the scrubbing happens before LLM call. This UI is for visualization only.
