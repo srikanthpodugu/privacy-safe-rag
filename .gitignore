@@ -1,0 +1,7 @@
+.vs/
+*.slnx
+*.json
+*.sqlite
+*.db*
+bin/
+obj/

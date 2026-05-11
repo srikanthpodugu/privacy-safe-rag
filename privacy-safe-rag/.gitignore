@@ -1,0 +1,24 @@
+# --- Visual Studio Junk ---
+.vs/
+*.sln
+*.suo
+*.user
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+bin/
+obj/
+
+# --- Python Junk ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# --- Data/Project Specific ---
+# We keep the folder, but ignore large/sensitive data files
+data/*
+!data/.gitkeep
