@@ -17,6 +17,7 @@ __pycache__/
 *.pyd
 venv/
 .env
+*.whl
 
 # --- Data/Project Specific ---
 # We keep the folder, but ignore large/sensitive data files
