@@ -23,6 +23,13 @@ Most AI systems send raw documents directly to cloud LLMs, risking the exposure 
 3. **Anonymization:** Real names are replaced with safe placeholders 
 4. **Processing:** The "scrubbed" text is then safely used for AI summaries or questions.
 
+## 🧠 Design Philosophy  
+This system is built with a privacy-first engineering mindset, meaning:  
+Data is never assumed safe until explicitly sanitized  
+Every document is treated as sensitive by default  
+Transformations are deterministic for traceability  
+AI systems are treated as “untrusted consumers” of data  
+
 ## Note: Streamlit
 Streamlit is just a demo layer and all the scrubbing happens before LLM call. This UI is for visualization only.
 
