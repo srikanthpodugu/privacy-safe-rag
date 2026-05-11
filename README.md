@@ -57,10 +57,10 @@ Safe analytics on anonymized datasets
 
 Each domain has its own privacy policy:
 
-Healthcare → stricter PHI rules
-Finance → account + transaction focus
-HR → resume + identity masking
-General → minimal scrubbing
+Healthcare → stricter PHI rules.
+Finance → account + transaction focus.
+HR → resume + identity masking.
+General → minimal scrubbing.
 
 ## 🧪 Current Capabilities (MVP Status)
 
