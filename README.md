@@ -26,9 +26,9 @@ Most AI systems send raw documents directly to cloud LLMs, risking the exposure 
 ## Note: Streamlit
 Streamlit is just a demo layer and all the scrubbing happens before LLM call. This UI is for visualization only.
 
-## 🧩 What Makes This Different
+## 🧩 What Makes My Project Different
 
-Unlike traditional PII scrubbing systems, this project introduces:
+Unlike traditional PII scrubbing systems, my project introduces:
 
 🔹 1. Semantic Domain Awareness
 
