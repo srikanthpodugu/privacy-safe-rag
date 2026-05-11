@@ -1,4 +1,4 @@
-# Universal Privacy-Safe AI Gateway
+# Enterprise AI Privacy Gateway (Production Prototype)
 A production-grade "Privacy-First" wrapper for LLM applications. 
 This system acts as a secure firewall, redacting sensitive PII from any document before it reaches an AI model.
 
