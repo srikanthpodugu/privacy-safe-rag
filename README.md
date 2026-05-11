@@ -31,7 +31,7 @@ Streamlit is just a demo layer and all the scrubbing happens before LLM call. Th
 Unlike traditional PII scrubbing systems, my project introduces:
 
 🔹 1. Semantic Domain Awareness
-Instead of keyword-based detection, the system understands meaning using embeddings:
+Instead of keyword-based detection, the system understands meaning using embeddings:  
 HR resumes  
 Finance documents  
 Healthcare records  
