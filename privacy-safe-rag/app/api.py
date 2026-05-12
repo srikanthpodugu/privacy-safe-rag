@@ -1,15 +1,22 @@
 from fastapi import APIRouter, UploadFile, File
+
 from engine.ingestor import PrivacyIngestor
+from engine.vault.token_vault import TokenVault
+
 
 router = APIRouter()
 
 ingestor = PrivacyIngestor()
 
+vault = TokenVault()
+
 # ==========================================================
 # FILE UPLOAD ENDPOINT
 # ==========================================================
 @router.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
+async def upload_document(
+    file: UploadFile = File(...)
+):
 
     content = await file.read()
 
@@ -18,8 +25,18 @@ async def upload_document(file: UploadFile = File(...)):
         filename=file.filename
     )
 
+    return result
+
+
+# ==========================================================
+# TOKEN RE-IDENTIFICATION
+# ==========================================================
+@router.get("/resolve/{token}")
+def resolve_token(token: str):
+
+    original_value = vault.resolve_token(token)
+
     return {
-        "filename": file.filename,
-        "status": "processed",
-        "output": result
+        "token": token,
+        "original_value": original_value
     }

@@ -1,5 +1,11 @@
-from presidio_analyzer import AnalyzerEngine, PatternRecognizer, Pattern
+from presidio_analyzer import (
+    AnalyzerEngine,
+    PatternRecognizer,
+    Pattern
+)
+
 from engine.policies.policy import DOMAIN_POLICIES
+
 from engine.tokenizer import DeterministicTokenizer
 
 
@@ -8,6 +14,7 @@ class PIIScrubber:
     def __init__(self):
 
         self.analyzer = AnalyzerEngine()
+
         self.tokenizer = DeterministicTokenizer()
 
         self._register_custom_recognizers()
@@ -25,6 +32,7 @@ class PIIScrubber:
             regex=r"\+?\d{1,3}[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}",
             score=0.95
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="PHONE_NUMBER",
@@ -38,6 +46,7 @@ class PIIScrubber:
             regex=r"\b(?:ACC|ACCT)[- ]?\d{6,16}\b",
             score=0.90
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="ACCOUNT_NUMBER",
@@ -51,6 +60,7 @@ class PIIScrubber:
             regex=r"\b\d{3}-\d{2}-\d{4}\b",
             score=0.95
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="US_SSN",
@@ -64,6 +74,7 @@ class PIIScrubber:
             regex=r"\b(?:\d[ -]*?){13,16}\b",
             score=0.90
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="CREDIT_CARD",
@@ -77,6 +88,7 @@ class PIIScrubber:
             regex=r"\b(?:MRN|MR#)[- ]?\d{4,12}\b",
             score=0.90
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="MEDICAL_RECORD_NUMBER",
@@ -90,6 +102,7 @@ class PIIScrubber:
             regex=r"\b(?:0?[1-9]|1[0-2])[/-](?:0?[1-9]|[12]\d|3[01])[/-](?:19|20)\d{2}\b",
             score=0.85
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="DATE_OF_BIRTH",
@@ -97,12 +110,13 @@ class PIIScrubber:
             )
         )
 
-        # IP ADDRESS
+        # IP
         ip = Pattern(
             name="ip",
             regex=r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b",
             score=0.85
         )
+
         recognizers.append(
             PatternRecognizer(
                 supported_entity="IP_ADDRESS",
@@ -110,16 +124,23 @@ class PIIScrubber:
             )
         )
 
+        # Register recognizers
         for r in recognizers:
             self.analyzer.registry.add_recognizer(r)
 
     # ==========================================================
-    # MAIN SCRUB FUNCTION (TOKENIZATION ENABLED)
+    # MAIN SCRUB FUNCTION
     # ==========================================================
-    def scrub(self, text: str, domain: str):
+    def scrub(self, text, domain):
 
-        policy = DOMAIN_POLICIES.get(domain, DOMAIN_POLICIES["general"])
-        allowed_entities = set(policy["scrub"])
+        policy = DOMAIN_POLICIES.get(
+            domain,
+            DOMAIN_POLICIES["general"]
+        )
+
+        allowed_entities = set(
+            policy["scrub"]
+        )
 
         results = self.analyzer.analyze(
             text=text,
@@ -127,8 +148,12 @@ class PIIScrubber:
             score_threshold=0.5
         )
 
-        # IMPORTANT: reverse order to preserve indexes
-        results = sorted(results, key=lambda x: x.start, reverse=True)
+        # Reverse order to preserve indexes
+        results = sorted(
+            results,
+            key=lambda x: x.start,
+            reverse=True
+        )
 
         for r in results:
 
@@ -142,6 +167,10 @@ class PIIScrubber:
                 original_value=original_value
             )
 
-            text = text[:r.start] + token + text[r.end:]
+            text = (
+                text[:r.start]
+                + token
+                + text[r.end:]
+            )
 
         return text
