@@ -1,50 +1,154 @@
 from engine.vault.tokenizer import DeterministicTokenizer
+from engine.calibration.confidence_calibrator import ConfidenceCalibrator
 
 
 class PIIScrubber:
 
-    def __init__(self, analyzer):
+    def __init__(self, analyzer=None, fusion_engine=None):
+
         self.analyzer = analyzer
+        self.fusion_engine = fusion_engine
+
         self.tokenizer = DeterministicTokenizer()
 
-    # ==========================================================
-    # SCRUB FUNCTION
-    # ==========================================================
-    def scrub(self, text: str, domain: str):
+        self.calibrator = ConfidenceCalibrator()
 
-        results = self.analyzer.analyze(
+        self.allowed_entities = {
+
+            "PERSON",
+            "PHONE_NUMBER",
+            "EMAIL_ADDRESS",
+            "IP_ADDRESS",
+            "DATE_TIME",
+            "US_SSN",
+            "CREDIT_CARD",
+            "LOCATION",
+            "ACCOUNT_NUMBER",
+            "MEDICAL_RECORD_NUMBER"
+        }
+
+    # ==========================================================
+    # MAIN SCRUB FUNCTION
+    # ==========================================================
+    def scrub(self, text: str, domain: str = None):
+
+        # ======================================================
+        # PRESIDIO DETECTION
+        # ======================================================
+        presidio_results = self.analyzer.analyze(
             text=text,
             language="en",
             score_threshold=0.5
         )
 
-        # IMPORTANT: reverse sorting prevents index shift issues
-        results = sorted(results, key=lambda x: x.start, reverse=True)
+        presidio_results = [
 
+            r for r in presidio_results
+
+            if r.entity_type in self.allowed_entities
+        ]
+
+        # ======================================================
+        # REGEX FALLBACK
+        # ======================================================
+        import re
+
+        regex_results = []
+
+        phone_pattern = r"\+?\d{1,3}[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}"
+
+        for match in re.finditer(phone_pattern, text):
+
+            regex_results.append({
+
+                "entity_type": "PHONE_NUMBER",
+                "start": match.start(),
+                "end": match.end()
+            })
+
+        # ======================================================
+        # FUTURE LLM RESULTS
+        # ======================================================
+        llm_results = []
+
+        # ======================================================
+        # FUSION ENGINE
+        # ======================================================
+        final_entities = self.fusion_engine.merge([
+
+            {
+                "source": "presidio",
+                "results": presidio_results
+            },
+
+            {
+                "source": "regex",
+                "results": regex_results
+            },
+
+            {
+                "source": "llm",
+                "results": llm_results
+            }
+        ])
+
+        # ======================================================
+        # CONFIDENCE CALIBRATION
+        # ======================================================
+        validated_entities = []
+
+        for entity in final_entities:
+
+            is_valid = self.calibrator.validate(
+
+                entity=entity,
+                original_text=text
+            )
+
+            if is_valid:
+                validated_entities.append(entity)
+
+        # ======================================================
+        # TOKENIZATION
+        # ======================================================
         scrubbed_text = text
-        entity_counts = {}
 
-        # ======================================================
-        # TOKENIZATION LOOP
-        # ======================================================
-        for r in results:
+        validated_entities = sorted(
 
-            original_value = text[r.start:r.end]
+            validated_entities,
+
+            key=lambda x: x["start"],
+
+            reverse=True
+        )
+
+        for entity in validated_entities:
+
+            original_value = text[
+                entity["start"]:entity["end"]
+            ]
 
             token = self.tokenizer.generate_token(
-                entity_type=r.entity_type,
+
+                entity_type=entity["entity_type"],
                 original_value=original_value
             )
 
             scrubbed_text = (
-                scrubbed_text[:r.start]
-                + token
-                + scrubbed_text[r.end:]
+
+                scrubbed_text[:entity["start"]] +
+
+                token +
+
+                scrubbed_text[entity["end"]:]
             )
 
-            entity_counts[r.entity_type] = entity_counts.get(r.entity_type, 0) + 1
-
+        # ======================================================
+        # RETURN
+        # ======================================================
         return {
+
             "scrubbed_text": scrubbed_text,
-            "entity_breakdown": entity_counts
+
+            "entities": validated_entities
         }
